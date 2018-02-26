@@ -1,0 +1,1409 @@
+Installation
+https://golang.org/dl/
+
+
+
+https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
+
+
+https://stackoverflow.com/questions/16977703/cant-get-golang-to-work-in-ubuntu
+
+To install go it is CRITICAL to first remove prior install (or you will get errors go build fails 
+ : runtime/mstkbar.go:151:10: debug.gcstackbarrieroff undefined)
+
+dpkg -l|grep golang  #  if you see any, run following cmd to remove
+sudo apt-get purge golang-*
+Verify whether go is still installed
+
+type go    # see if go is installed
+typical output if go is installed
+
+go is hashed (/usr/local/go/bin/go)
+if go is installed remove it
+
+sudo rm -rf /usr/local/go     #  not just /usr/local/go/bin/go
+download the latest tarball https://golang.org/dl/ expand and install
+
+new_golang_ver=$(curl https://golang.org/VERSION?m=text 2> /dev/null)
+cd /tmp
+wget https://dl.google.com/go/${new_golang_ver}.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf  ${new_golang_ver}.linux-amd64.tar.gz
+define these environment variables in your ~/.bashrc
+
+export GOROOT=/usr/local/go
+export PATH=${GOROOT}/bin:${PATH}
+export GOPATH=${HOME}/gopath  # typical value change at will
+export PATH=${GOPATH}/bin:${PATH}
+source your above new env var definitions
+
+source ~/.bashrc  
+verify install
+
+go version
+if installed correctly typical output
+
+go version go1.9.3 linux/amd64
+--- install is complete so lets compile a hello world ---
+
+[[ ! -d $GOPATH ]] && mkdir -p ${GOPATH}/{bin,pkg,src} # if no dir then create
+mkdir -p ${GOPATH}/src/github.com/mygithubname/play
+cd ${GOPATH}/src/github.com/mygithubname/play
+now paste following to create the go source file hello_world.go
+
+tee hello_world.go  << WOW
+
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Printf("hello, world\n")
+}
+
+WOW
+compile your source code
+
+go build hello_world.go 
+
+./hello_world     #  run your executable 
+hello, world
+
+
+Executable commands must always use package main.
+
+
+
+Go Support VSCode
+1)CLick PainText below shown on VSCode
+2)say's Analysis Tools Missing
+3)Show Message
+   'The "gopkgs" command is not available. Use "go get -v github.com/uudashr/gopkgs/cmd/gopkgs" to install.'
+   Click Install on missing Tools
+
+
+output:
+Installing 1 tool at /home/sysadmin/gopath/bin
+  gopkgs
+
+Installing github.com/uudashr/gopkgs/cmd/gopkgs SUCCEEDED
+
+All tools successfully installed. You're ready to Go :).
+
+
+
+
+
+Hello World Program:
+
+main.go
+
+package main
+import "fmt"
+func main() {
+	fmt.Println("Hello World Program")
+}
+
+output:
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go
+Hello World Program
+
+
+Go CLI 
+
+go build    => compiles a bunch of go source files//compiles only, does not execute.(we run the file by ./main)
+go run      => compiles and executes one or two files instantly//compiles and executes immediatley
+go fmt      => formats all the code in each file in the current directoy
+go install  =>compiles and installs a package
+go get      =>Downloads the raw source code of someone's else package
+go test     =>Runs any tests associated with the current project
+
+
+
+Package:
+A package is a collection of common source code files.
+Basically we have two types of packages
+1)Executable Package:generates a file that we can run
+2)Reusable Package:code used as helpers good place to put resuable logic
+
+
+How do we know we are making Executable package or Resuable package?
+The name of the package that determines that wheather we are using executable package or resuable package.
+package main;
+The main is used for executable package//runnable files.
+
+
+import "fmt"
+fmt library is used to print alot of different information.its a standard library used in golang.
+
+
+VSCode speciality
+when we write fmt.Println(card, it automatically picksup import "fmt")
+
+golang:
+go is refer to the statically typed language.
+Go is a procedural style language similar to C. 
+
+
+
+
+
+Dynamic Type:      Static Type:
+Javascript         C++
+Ruby               Java
+Python             Go
+
+
+Basic Go Types:
+Type                  Example
+bool                  true false
+string                "Hi",  "How its going"
+int                   0 -1000  999
+float64              10.000001    0.000009
+
+
+
+
+
+var bookTitle string= "Harry Potter" 
+It is valid but the compiler will warn you if you have it like this inside an function. 
+It wants you to write 
+bookTitle := "Harry Potter" instead.
+However if you declare an variable outside an function you must do it like above.
+
+static means that you must declare the variable what type the variable belongs to.
+However,dynamic means that you do not need to declare.
+After assignment, we will know what type for this variable. It is called loosely-typed.
+Like Swift language, the variable can be statically and dynamically typed. 
+
+
+
+Example:
+
+package main
+
+import "fmt"
+
+func main() {
+	//var card string = "Ace of Spades"//green line error
+	card := "Ace of Spades" //we relying on the go compiler to just figured that card contains a string
+	card = "Five of Diamonds"
+	fmt.Println(card)
+}
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go
+Five of Diamonds
+
+
+Will the following code compile?  Why or why not?
+paperColor := "Green"
+paperColor := "Blue"
+
+Answer:)
+No, because a variable can only be initialized one time. 
+In this case, the ':=' operator is being used to initialize
+'paperColor' two times
+
+
+Important Note:the := can be used only inside the function, not outside, below code is error
+Example:2
+
+package main
+import "fmt"
+deckSize := 20  
+func main() {
+  fmt.Println(deckSize)
+}
+output:
+prog.go:5:1: syntax error: non-declaration statement outside function body
+
+
+
+
+
+Example:3
+package main
+import "fmt"
+var deckSize int  //valid declaration.
+func main() {
+  deckSize = 50
+  fmt.Println(deckSize)
+}
+output:
+50
+
+Functions & Types:
+
+Go Function speciality
+1)Multipe return values
+2)use it like any other type(i.e bool,string...)
+3)Function literals->we can declare a function inside another function
+
+
+example:
+package main
+
+import "fmt"
+
+func main() {
+	card := newCard()
+	fmt.Println(card)
+}
+
+func newCard() string {  //string, a value type that is going to return//without this type statement its an error.
+	return "Five of Diamonds"
+}
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go
+Five of Diamonds
+
+
+
+example:2  //below code is error
+package main
+
+import "fmt"
+
+func main() {
+	card := newCard()
+	fmt.Println(card)
+}
+
+func newCard() int {  //returning string but defined int so its an error.
+	return "Five of Diamonds"
+}
+
+
+If a function returns a value,
+do we have to annotate, or mark, the function with the 
+type of value that is being returned?
+Ans)Yes.
+
+
+
+
+The Go compiler is presenting an error message about the following function.  
+What should we do to fix the error?
+
+func getSize() {
+    return "30 meters"
+}
+Ans)Add a return type of 'string' to the function, like "func getSize() string {"
+
+
+
+
+
+Imagine we have two files in the same folder with the same package name. 
+Will the following code successfully compile?  
+
+In main.go:
+
+package main
+ 
+func main() {
+    printState()
+}
+
+
+
+
+In a separate file called state.go:
+
+package main
+ 
+import "fmt"
+ 
+func printState() {
+    fmt.Println("California")
+}
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go state.go
+California
+
+
+
+
+option1)No, because the 'state.go' file must be imported because it can be used.
+option2)Yes, because both files are apart of the same package.
+
+Answer)option2 Yes, because both files are apart of the same package.
+
+i.e  Files in the same package do not have to be imported into each other.
+
+
+
+
+
+Array and Slice
+
+Array:fixed length list of thing
+slice:An array that can grow or shrink at Will
+
+slices and array must be defined with the data type 
+
+
+Example:
+
+package main
+
+import "fmt"
+
+func main() {
+	cards := []string{"Ace of Diamonds", newCard()}
+	cards = append(cards, "Six of Spades") //it returns a new slice and assign back to variable card(it doesnot modify but returns new slice)
+	for i, card := range cards {
+		fmt.Println(i, card)
+	}
+
+}
+
+func newCard() string {
+	return "Five of Diamonds"
+}
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go
+0 Ace of Diamonds
+1 Five of Diamonds
+2 Six of Spades
+
+
+
+
+
+
+Which of the following represents a slice where each element in it is of type int?
+[]string{}
+[]int{}
+[]float{}
+
+Ans:[]int{}
+
+
+Would the following code compile successfully?  Try it out yourself!  
+
+for index, card := range cards {
+    fmt.Println(card)
+}
+
+Answer:
+No, because every variable we declare must be used in our code.
+In this case, 'index' is not being used.
+
+
+
+
+
+
+
+go is not a object oriented programming
+since there is no class concept in golang, we have concept  called struct where we can
+define our own types of variable and group together.
+
+and also we have UserDefinedTypes
+
+In UserDefined Types, it is the same thing as a Built-in-Type, we just have our own custom name
+and extends the behaviour of built-in-type(likes class extends in OO)
+syntax:
+type customname build-in-type
+
+
+example:
+type deck []string     //slice with custom type name
+i.e deck extends all the behaviour of slice of string []string and we do custom things on deck
+
+
+example:2
+type Salutation string
+//Salutation extends the behaviour of string
+
+
+
+
+
+
+example program:
+main.go
+package main
+
+import "fmt"
+
+func main() {
+	cards := deck{"Ace of Diamonds", newCard()}
+	cards = append(cards, "Six of Spades") //it returns a new slice and assign back to variable card
+	for i, card := range cards {
+		fmt.Println(i, card)
+	}
+
+}
+
+func newCard() string {
+	return "Five of Diamonds"
+}
+
+
+
+deck.go
+package main
+//create a new type of deck
+//which is a slice of strings.
+type deck []string
+
+
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Ace of Diamonds
+1 Five of Diamonds
+2 Six of Spades
+
+
+
+
+
+
+exampe:
+package main
+
+func main() {
+	cards := deck{"Ace of Diamonds", newCard()}
+	cards = append(cards, "Six of Spades") //it returns a new slice and assign back to variable card
+	cards.print()//every variable(cards is of type deck now) of type deck can call this function on itself
+}
+
+func newCard() string {
+	return "Five of Diamonds"
+}
+
+
+deck.go
+package main
+
+import (
+	"fmt"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func (d deck) print() { //receiver on a function  -->d is cards sent in main.go, deck is type 
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+// func (cards deck) print() { //receiver on a function
+// 	for i, card := range cards {
+// 		fmt.Println(i, card)
+// 	}
+// }
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Ace of Diamonds
+1 Five of Diamonds
+2 Six of Spades
+
+
+
+
+
+What would the following code print out?
+
+package main
+ 
+import "fmt"
+ 
+type book string
+ 
+func (b book) printTitle() {
+    fmt.Println(b)
+}
+ 
+func main() {
+    var b book = "Harry Potter"
+    b.printTitle()
+}
+
+output:
+Harry Potter
+
+.
+
+By creating a new type with a function that has a receiver, we...
+Are adding a 'method' to any value of that type
+
+
+
+
+
+
+Is the following code valid?
+
+type laptopSize float64
+ 
+func (this laptopSize) getSizeOfLaptop() laptopSize {
+    return this
+}
+Yes, but it is breaking convention, Go avoids any mention of 'this' or 'self'
+
+
+
+
+
+
+
+
+
+Example
+
+main.go
+package main
+func main() {
+	cards := newDeck()
+
+	cards.print()
+}
+
+
+deck.go
+package main
+
+import (
+	"fmt"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Ace of Spades
+1 Two of Spades
+2 Three of Spades
+3 Four of Spades
+4 Ace of Hearts
+5 Two of Hearts
+6 Three of Hearts
+7 Four of Hearts
+8 Ace of Diamonds
+9 Two of Diamonds
+10 Three of Diamonds
+11 Four of Diamonds
+12 Ace of Clubs
+13 Two of Clubs
+14 Three of Clubs
+15 Four of Clubs
+
+
+
+
+Multiple return values of function
+
+main.go
+package main
+func main() {
+	cards := newDeck()
+
+	hand, remainingCards := deal(cards, 5)
+	hand.print()
+	remainingCards.print()
+}
+
+deck.go
+package main
+
+import (
+	"fmt"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+func deal(d deck, handsize int) (deck, deck) {
+
+	return d[:handsize], d[handsize:]
+}
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Ace of Spades
+1 Two of Spades
+2 Three of Spades
+3 Four of Spades
+4 Ace of Hearts
+0 Two of Hearts
+1 Three of Hearts
+2 Four of Hearts
+3 Ace of Diamonds
+4 Two of Diamonds
+5 Three of Diamonds
+6 Four of Diamonds
+7 Ace of Clubs
+8 Two of Clubs
+9 Three of Clubs
+10 Four of Clubs
+
+
+
+
+
+
+
+
+In the following code snippet, what will the value and type of 'title' and 'pages' be?
+
+func getBookInfo() (string, int) {
+    return "War and Peace", 1000
+}
+ 
+title, pages := getBookInfo()
+
+
+Ans:
+Title will be a string with value "War and Peace".  Pages will be an int with value 1000
+
+
+
+
+What will the following program log out?
+
+package main
+ 
+import "fmt"
+ 
+func main() {
+   c := color("Red")
+ 
+   fmt.Println(c.describe("is an awesome color"))
+}
+ 
+type color string
+ 
+func (c color) describe(description string) (string) {
+   return string(c) + " " + description
+}
+
+
+output:
+"Red is an awesome color"
+
+
+
+This is a tricky question about something that we'll cover in much greater detail later on.  
+Think back to our current "cards" program, where we have the following code.
+
+func main() {
+    cards := newDeck()
+ 
+    hand, remainingCards := deal(cards, 5)
+ 
+    hand.print()
+    remainingCards.print()
+}
+After calling "deal" and passing in "cards", does the list of strings that the "cards" variable point at change?  In other words, 
+did we modify the 'cards' slice by calling 'deal'?
+
+ans:
+No, 'cards' will be the same before and after calling 'deal'
+ You got it.  We created two new references that point at subsections of the 'cards' slice.  
+ We never directly modified the slice that 'cards' is pointing at. 
+
+
+
+
+
+
+
+
+
+ByteSlices
+A ByteSlices []byte is an ascii value that is converted from string
+i.e
+"Hi there"->string
+[72 105 32 116 104 101 114 101 33]->ascii values of "Hello there"
+
+
+
+
+type conversion:
+type conversion is used to take one type of value and turn it into another type
+example:
+
+package main
+import (
+	"fmt"
+)
+func main() {
+	msg := "Hi there"
+	fmt.Print([]byte(msg))
+}
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go
+[72 105 32 116 104 101 114 101]_
+
+
+
+
+
+
+
+
+
+
+
+
+Package strings
+
+import "strings"
+Package strings implements simple functions to manipulate UTF-8 encoded strings.
+
+
+func Join ¶
+
+func Join(a []string, sep string) string
+
+Join concatenates the elements of a to create a single string.
+The separator string sep is placed between elements in the resulting string.
+
+example:
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	s := []string{"foo", "bar", "baz"}
+	fmt.Println(strings.Join(s, ", "))
+}
+
+
+
+
+
+main.go
+package main
+
+import "fmt"
+
+func main() {
+	cards := newDeck()
+	fmt.Print(cards.toString())
+
+}
+
+
+deck.go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+func deal(d deck, handsize int) (deck, deck) {
+
+	return d[:handsize], d[handsize:]
+}
+
+func (d deck) toString() string {
+	return strings.Join(d, ",")
+}
+
+
+
+
+below code also works why?
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+func deal(d deck, handsize int) (deck, deck) {
+
+	return d[:handsize], d[handsize:]
+}
+
+func (d deck) toString() string {
+	return strings.Join([]string(d), ",")//////deck type is converted to slice of string and used join
+}
+
+answer:
+since slice of string and deck type both are same, there is no need toString() function  above
+
+
+Since we already have an instance of deck on the receiver, d, 
+why there's still a need to type convert it to []string?
+
+Stephen — Instructor  · 3 months ago 
+Ingo - You are correct, the extra .toString call was superfluous!
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+Ace of Spades,Two of Spades,Three of Spades,Four of Spades,
+Ace of Hearts,Two of Hearts,Three of Hearts,Four of Hearts,
+Ace of Diamonds,Two of Diamonds,Three of Diamonds,Four of Diamonds,
+Ace of Clubs,Two of Clubs,Three of Clubs,Four of Club
+
+
+
+
+Package ioutil
+
+func WriteFile(filename string, data []byte, perm os.FileMode) error
+WriteFile writes data to a file named by filename. 
+If the file does not exist, WriteFile creates it with permissions perm;
+otherwise WriteFile truncates it before writing.
+
+
+
+
+
+
+
+
+
+main.go
+package main
+
+func main() {
+	cards := newDeck()
+	cards.saveToFile("my_cards")
+}
+
+deck.go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"strings"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+func deal(d deck, handsize int) (deck, deck) {
+
+	return d[:handsize], d[handsize:]
+}
+
+func (d deck) toString() string {
+	return strings.Join([]string(d), ",") //////deck type is converted to slice of string and used join
+}
+
+func (d deck) saveToFile(filename string) error {
+
+	return ioutil.WriteFile(filename, []byte(d.toString()), 0666)
+
+}
+
+
+output:
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+my_cards.txt 
+Ace of Spades,Two of Spades,Three of Spades,Four of Spades,
+Ace of Hearts,Two of Hearts,Three of Hearts,Four of Hearts,Ace of Diamonds
+,Two of Diamonds,Three of Diamonds,Four of Diamonds,Ace of Clubs,
+Two of Clubs,Three of Clubs,Four of Clubs
+
+
+
+
+
+func ReadFile ¶
+func ReadFile(filename string) ([]byte, error)
+ReadFile reads the file named by filename and returns the contents. 
+A successful call returns err == nil, not err == EOF. Because ReadFile reads the whole file,
+it does not treat an EOF from Read as an error to be reported.
+
+
+Package os
+Package os provides a platform-independent interface to operating system functionality.
+The design is Unix-like, although the error handling is Go-like; failing calls return values of
+type error rather than error numbers. Often, more information is available within the error. 
+For example, if a call that takes a file name fails, such as Open or Stat, the error will include the 
+failing file name when printed and will be of type *PathError, which may be unpacked for more information.
+
+func Exit 
+func Exit(code int)
+Exit causes the current program to exit with the given status code. 
+Conventionally, code zero indicates success, non-zero an error.
+ The program terminates immediately; deferred functions are not run.
+
+func Split(s, sep string) []string
+Split slices s into all substrings separated by sep and returns a slice of the substrings between those separators.
+If s does not contain sep and sep is not empty, Split returns a slice of length 1 whose only element is s.
+If sep is empty, Split splits after each UTF-8 sequence. If both s and sep are empty, Split returns an empty slice.
+It is equivalent to SplitN with a count of -1.
+
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	fmt.Printf("%q\n", strings.Split("a,b,c", ","))
+	fmt.Printf("%q\n", strings.Split("a man a plan a canal panama", "a "))
+	fmt.Printf("%q\n", strings.Split(" xyz ", ""))
+	fmt.Printf("%q\n", strings.Split("", "Bernardo O'Higgins"))
+}
+
+output:
+["a" "b" "c"]
+["" "man " "plan " "canal panama"]
+[" " "x" "y" "z" " "]
+[""]
+
+
+
+
+
+ReadFile
+main.go
+package main
+
+func main() {
+	cards := newDeckFromFile("my_cards")
+	cards.print()
+}
+
+
+deck.go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+func deal(d deck, handsize int) (deck, deck) {
+
+	return d[:handsize], d[handsize:]
+}
+
+func (d deck) toString() string {
+	return strings.Join([]string(d), ",") //////deck type is converted to slice of string and used join
+}
+
+func (d deck) saveToFile(filename string) error {
+
+	return ioutil.WriteFile(filename, []byte(d.toString()), 0666)
+
+}
+
+func newDeckFromFile(filename string) deck {
+
+	bs, err := ioutil.ReadFile(filename) //bs>byte stream returned from ReadFile
+	if err != nil {
+		//option1:-log error and return a call to a new deck
+		//option2:log the error and entirely quit the program
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+	s := strings.Split(string(bs), ",") //returns  slice of the substrings
+	return deck(s)
+}
+
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Ace of Spades
+1 Two of Spades
+2 Three of Spades
+3 Four of Spades
+4 Ace of Hearts
+5 Two of Hearts
+6 Three of Hearts
+7 Four of Hearts
+8 Ace of Diamonds
+9 Two of Diamonds
+10 Three of Diamonds
+11 Four of Diamonds
+12 Ace of Clubs
+13 Two of Clubs
+14 Three of Clubs
+15 Four of Clubs
+
+If we run above program it still repeats same so below is the one which listed randomly
+
+
+
+
+
+main.go
+package main
+
+func main() {
+	cards := newDeckFromFile("my_cardss")
+	cards.print()
+}
+If wrong file name
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+Error: open my_cardss: no such file or directory
+exit status 1
+
+
+
+
+
+
+
+Package rand
+import "crypto/rand"
+Package rand implements a cryptographically secure pseudorandom number generator.
+
+
+
+
+
+
+
+
+Package rand
+import "math/rand"
+Package rand implements pseudo-random number generators.
+func Intn(n int) int
+Intn returns, as an int, a non-negative pseudo-random number in [0,n) from the default Source. 
+It panics if n <= 0.
+
+
+
+type Rand ¶
+A Rand is a source of random numbers.
+
+func New ¶
+New returns a new Rand that uses random values from src to generate other random values.
+
+
+
+
+
+
+Package time
+import "time"
+Package time provides functionality for measuring and displaying time.
+The calendrical calculations always assume a Gregorian calendar, with no leap seconds.
+
+
+
+func Now() Time
+func Now
+Now returns the current local time.
+
+
+func (Time) UnixNano ¶
+func (t Time) UnixNano() int64
+UnixNano returns t as a Unix time, the number of nanoseconds elapsed since January 1, 1970 UTC. 
+The result is undefined if the Unix time in nanoseconds cannot be represented by an int64
+(a date before the year 1678 or after 2262). Note that this means the result of calling UnixNano 
+on the zero Time is undefined.
+
+
+
+
+main.go
+package main
+
+func main() {
+	cards := newDeck()
+	cards.shuffle()
+	cards.print()
+}
+
+
+deck.go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"strings"
+	"time"
+)
+
+//create a new type of deck
+//which is a slice of strings.
+
+type deck []string
+
+func newDeck() deck {
+	cards := deck{}
+
+	cardSuites := []string{"Spades", "Hearts", "Diamonds", "Clubs"}
+	cardValues := []string{"Ace", "Two", "Three", "Four"}
+
+	for _, suit := range cardSuites {
+		for _, value := range cardValues {
+			cards = append(cards, value+" of "+suit)
+		}
+	}
+	return cards
+}
+
+func (d deck) print() { //receiver on a function
+	for i, card := range d {
+		fmt.Println(i, card)
+	}
+}
+
+func deal(d deck, handsize int) (deck, deck) {
+
+	return d[:handsize], d[handsize:]
+}
+
+func (d deck) toString() string {
+	return strings.Join([]string(d), ",") //////deck type is converted to slice of string and used join
+}
+
+func (d deck) saveToFile(filename string) error {
+
+	return ioutil.WriteFile(filename, []byte(d.toString()), 0666)
+
+}
+
+func newDeckFromFile(filename string) deck {
+
+	bs, err := ioutil.ReadFile(filename) //bs>byte stream returned from ReadFile
+	if err != nil {
+		//option1:-log error and return a call to a new deck
+		//option2:log the error and entirely quit the program
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+	s := strings.Split(string(bs), ",") //returns  slice of the substrings
+	return deck(s)
+}
+
+func (d deck) shuffle() {
+
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+	for i := range d {
+		newPosition := r.Intn(len(d) - 1)
+		d[i], d[newPosition] = d[newPosition], d[i]
+	}
+
+}
+
+
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Two of Hearts
+1 Ace of Clubs
+2 Ace of Spades
+3 Ace of Hearts
+4 Four of Diamonds
+5 Four of Hearts
+6 Four of Clubs
+7 Three of Diamonds
+8 Two of Diamonds
+9 Three of Clubs
+10 Ace of Diamonds
+11 Two of Clubs
+12 Three of Spades
+13 Two of Spades
+14 Four of Spades
+15 Three of Hearts
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Four of Diamonds
+1 Three of Clubs
+2 Two of Hearts
+3 Two of Spades
+4 Ace of Diamonds
+5 Ace of Spades
+6 Two of Clubs
+7 Two of Diamonds
+8 Three of Hearts
+9 Three of Spades
+10 Ace of Hearts
+11 Four of Spades
+12 Three of Diamonds
+13 Ace of Clubs
+14 Four of Clubs
+15 Four of Hearts
+sysadmin@AcubeL020:/var/www/html/go$ go run main.go deck.go
+0 Four of Hearts
+1 Three of Hearts
+2 Two of Clubs
+3 Four of Spades
+4 Ace of Spades
+5 Four of Clubs
+6 Three of Spades
+7 Ace of Hearts
+8 Ace of Diamonds
+9 Two of Spades
+10 Four of Diamonds
+11 Two of Hearts
+12 Three of Diamonds
+13 Two of Diamonds
+14 Three of Clubs
+15 Ace of Clubs
+
+
+look 29,30 video again its complexe
+
+
+
+
+Testing with go
+GO testing is not Rspec, mocha,jasimine,selenium,etc....
+To make a test, create a new file ending in _test.go
+i.e deck_test.go
+
+To run all tests in a package, run the command
+go test
+
+
